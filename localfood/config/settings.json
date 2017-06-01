@@ -1,0 +1,31 @@
+{
+  "env" : "staging",
+  "privateKey" : "37LvDSm4XvjYOh9Y",
+  "algorithm" : "aes-256-ctr",
+  "development": {
+    "port" : 9002
+  },
+  "staging": {
+    "port" : 3012
+  },
+  "production": {
+    "port" : 8080
+  },
+  "social": {
+     "facebook": {
+      "clientID": "APP_ID",
+      "clientSecret": "APP_SECRET",
+      "callbackURL": "http://APP_URL/auth/facebook/callback"
+    },
+    "twitter": {
+      "clientID": "CONSUMER_KEY",
+      "clientSecret": "CONSUMER_SECRET",
+      "callbackURL": "http://APP_URL/auth/twitter/callback"
+    },
+    "google": {
+      "clientID": "APP_ID",
+      "clientSecret": "APP_SECRET",
+      "callbackURL": "http://APP_URL/auth/google/callback"
+    }
+  }
+}
