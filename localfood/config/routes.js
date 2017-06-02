@@ -16,9 +16,9 @@ router.post('/signup', userValidations.create, controllers.users.create);
 router.post('/verifyEmail', userValidations.verifyEmail, controllers.users.verifyEmail);
 router.post('/login',userValidations.login, controllers.users.login);
 //router.get('/logout',controllers.users.logout);
-//router.post('/forgotPassword',userValidations.forgotPassword, controllers.users.forgotPassword);
-//router.post('/resetPassword', userValidations.resetPassword,controllers.users.resetPassword);
-//router.post('/resendVerificationEmail', userValidations.resendVerificationEmail,controllers.users.resendVerificationEmail);
+router.post('/forgotPassword',userValidations.forgotPassword, controllers.users.forgotPassword);
+router.post('/resetPassword', userValidations.resetPassword,controllers.users.resetPassword);
+router.post('/resendVerificationEmail', userValidations.resendVerificationEmail,controllers.users.resendVerificationEmail);
 //
 //router.post('/loginWithFacebook',userValidations.create, controllers.users.loginWithFacebook);
 //

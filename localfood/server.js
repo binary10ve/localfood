@@ -100,7 +100,7 @@ require('./config/passport')(passport, settings.social);
 var server = app.listen(port, function () {
     var host = server.address().address;
     var port = server.address().port;
-    console.log('Findoo Server listening at http://%s:%s', host, port);
+    console.log('Foodie Server listening at http://%s:%s', host, port);
 });
 
 

@@ -40,22 +40,23 @@ module.exports.verifyEmail = function(req, res){
 };
 
 
-//module.exports.resendVerificationEmail = function(req, res) {
-//  Model.User.findOne({where : {email : req.body.email}})
-//        .then(function(user){
-//          if(user){
-//            if(user.isVerified) return res.status(200).json({message : "Your email address is already verified"});
-//            var tokenData = {
-//                        email: user.email,
-//                        id: user.id
-//                    };
-//            Common.sentMailVerificationLink(user,JSONWebToken.sign(tokenData, util.privateKey));
-//            res.status(200).json({message : "Account verification link is sucessfully sent to your email id"});
-//          }else{
-//            res.status(401).json({message : "Invalid username or password"})
-//          }
-//        })
-//};
+module.exports.resendVerificationEmail = function(req, res) {
+  User.findByUsername(req.body.username,function(err,user){
+      if(user){
+          if(user.isVerified) return res.status(200).json({message : "Your email address is already verified"});
+          var tokenData = {
+              username: user.username,
+              id : user.id
+          };
+          var token = JSONWebToken.sign(tokenData, settings.privateKey);
+          mailer.sentMailVerificationLink(user,token,req.body.hostURL);
+          res.status(200).json({message : "Account verification link is sucessfully sent to your email id"});
+      }else{
+          res.status(401).json({message : "Invalid username or password"})
+      }
+  })
+
+};
 
 
 module.exports.login = function(req, res, next){
@@ -118,54 +119,47 @@ module.exports.login = function(req, res, next){
 //};
 
 //
-//module.exports.forgotPassword = function(req, res){
-//    Model.User.findOne({ where : {email : req.body.email}})
-//      .then(function(user){
-//        if(user){
-//           var tokenData = {
-//                        email: user.email,
-//                        id: user.id
-//                    },
-//                token = JSONWebToken.sign(tokenData, settings.privateKey);
-//          mailer.sentMailForgotPassword(user,token, req.body.forgotPasswordUrl);
-//          res.status(200).json({message : "Instruction to reset password is sent vial email"})
-//        }else{
-//          res.status(401).json({message : "User with this email doesn't exists in the system"});
-//        }
-//      })
-//      .catch(function(error){
-//          console.log("error",error)
-//      })
-//}
+module.exports.forgotPassword = function(req, res){
+    User.findByUsername(req.body.username,function(err,user){
+        if(user){
+            var tokenData = {
+                    username: user.username,
+                    id: user.id
+                },
+                token = JSONWebToken.sign(tokenData, settings.privateKey);
+            mailer.sentMailForgotPassword(user,token, req.body.hostURL);
+            res.status(200).json({message : "Instruction to reset password is sent vial email"})
+        }else{
+            res.status(401).json({message : "User with this email doesn't exists in the system"});
+        }
+    })
+};
 //
 //
 //
-//module.exports.resetPassword = function(req, res){
-//   JSONWebToken.verify(req.body.token, settings.privateKey, function(err, decoded) {
-//          console.log("in verify","decoded,", decoded)
-//            if(decoded === undefined) return res.status(403).json({message : "Invalid Reset Password link"})
-//            Model.User.findAll({
-//              where : {
-//                id :decoded.id,
-//                email : decoded.email
-//              }
-//            })
-//            .then(function(users){
-//              if(users.length){
-//                users.forEach(function(u){
-//                  u.update({ password : util.encrypt(req.body.password)});
-//                })
-//                return res.status(200).json({message :  "Password Reset Successfully"});
-//              }else{
-//                return res.status(403).json({message : "Invalid Reset Password link"});
-//              }
-//            })
-//            .catch(function(error){
-//              return res.status(500).json(error);
-//            })
-//
-//        });
-//};
+module.exports.resetPassword = function(req, res){
+   JSONWebToken.verify(req.body.token, settings.privateKey, function(err, decoded) {
+          console.log("in verify","decoded,", decoded)
+            if(decoded === undefined) return res.status(403).json({message : "Invalid Reset Password link"})
+       User.find({
+           id :decoded.id,
+           username : decoded.username
+       }, function(err,user){
+           if(err){
+               return res.status(403).json({message : "Invalid Reset Password link"});
+           }
+           if(user){
+               User.update({
+                   id :decoded.id
+               },{ $set: {  password : util.encrypt(req.body.password)}},{}, function(){
+                   return res.status(200).json({message :  "Password Reset Successfully"});
+               });
+
+           }
+       });
+
+        });
+};
 
 
 module.exports.create = function(req, res, next){
@@ -183,7 +177,7 @@ module.exports.create = function(req, res, next){
                 id : user.id
             };
             var token = JSONWebToken.sign(tokenData, settings.privateKey);
-            mailer.sentMailVerificationLink(user,token,req.body.verifyEmailUrl);
+            mailer.sentMailVerificationLink(user,token,req.body.hostURL);
             return  res.status(201).json({ token : token});
         })
 
