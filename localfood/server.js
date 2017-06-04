@@ -14,6 +14,7 @@ opts = {};
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/streetfood');
 
+
 //Enable Cors
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -100,7 +101,7 @@ require('./config/passport')(passport, settings.social);
 var server = app.listen(port, function () {
     var host = server.address().address;
     var port = server.address().port;
-    console.log('Foodie Server listening at http://%s:%s', host, port);
+    console.log(' Server listening at http://%s:%s', host, port);
 });
 
 

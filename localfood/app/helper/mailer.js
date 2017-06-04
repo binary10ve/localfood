@@ -56,7 +56,7 @@ exports.sentMailForgotPassword = function(user, token, url) {
 exports.sendErrorStackTrace = function(error,req) {
 
      app.mailer.send('../views/mailer/error', {
-        to: 'saneilnaik11@gmail.com', // REQUIRED. This can be a comma delimited string just like a normal email to field.
+        to: 'snapav.clarice@gmail.com', // REQUIRED. This can be a comma delimited string just like a normal email to field.
         subject: "Foodie Error Alert!!", // REQUIRED.
         error : error,
         req : req
